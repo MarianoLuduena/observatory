@@ -30,4 +30,12 @@ trait SparkSpecHelper {
   protected def defaultStorageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK
 
   protected def persist[T](rdd: RDD[T]): RDD[T] = rdd.persist(defaultStorageLevel)
+
+  protected def blockingUnpersist: Boolean = false
+
+  protected def collect[T](rdd: RDD[T], unpersist: Boolean = true): Array[T] = {
+    val array = rdd.collect()
+    if (unpersist) rdd.unpersist(blocking = blockingUnpersist)
+    array
+  }
 }
