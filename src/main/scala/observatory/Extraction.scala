@@ -2,7 +2,7 @@ package observatory
 
 import java.time.LocalDate
 
-import observatory.domain.{Station, Temperature}
+import observatory.domain.Station
 import observatory.helpers.SparkSpecHelper
 import org.apache.spark.rdd.RDD
 
@@ -43,7 +43,7 @@ object Extraction extends SparkSpecHelper {
 
     val temperaturesRDD =
       read(temperaturesFile)
-        .flatMap { l => Temperature.parse(l).toOption }  // ignore the ones that failed parsing
+        .flatMap { l => domain.Temperature.parse(l).toOption }  // ignore the ones that failed parsing
         .filter(!_.isTemperatureNull)  // discard null temperatures
         .groupBy(_.stationUid)  // build pairRDD
 
