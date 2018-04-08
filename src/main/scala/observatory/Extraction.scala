@@ -18,10 +18,7 @@ object Extraction extends SparkSpecHelper {
     * @return A sequence containing triplets (date, location, temperature)
     */
   def locateTemperatures(year: Year, stationsFile: String, temperaturesFile: String): Iterable[(LocalDate, Location, Temperature)] = {
-    val rdd = locateTemperaturesRDD(year, stationsFile, temperaturesFile)
-    val sequence = rdd.collect()
-    rdd.unpersist(blocking = false)
-    sequence
+    collect(locateTemperaturesRDD(year, stationsFile, temperaturesFile))
   }
 
   /**
@@ -47,6 +44,7 @@ object Extraction extends SparkSpecHelper {
     val temperaturesRDD =
       read(temperaturesFile)
         .flatMap { l => Temperature.parse(l).toOption }  // ignore the ones that failed parsing
+        .filter(!_.isTemperatureNull)  // discard null temperatures
         .groupBy(_.stationUid)  // build pairRDD
 
     val joinedRDD = persist {
@@ -64,7 +62,22 @@ object Extraction extends SparkSpecHelper {
     * @return A sequence containing, for each location, the average temperature over the year.
     */
   def locationYearlyAverageRecords(records: Iterable[(LocalDate, Location, Temperature)]): Iterable[(Location, Temperature)] = {
-    ???
+    collect(locationYearlyAverageRecordsRDD(spark.sparkContext.parallelize[(LocalDate, Location, Temperature)](records.toSeq)))
+  }
+
+  /**
+    * This method should return the average temperature at each location, over a year.
+    *
+    * @param records An RDD containing triplets (date, location, temperature)
+    * @return An RDD containing, for each location, the average temperature over the year.
+    */
+  def locationYearlyAverageRecordsRDD(records: RDD[(LocalDate, Location, Temperature)]): RDD[(Location, Temperature)] = {
+    persist {
+      records.groupBy(_._2).mapValues { i =>
+        val (sum, q) = i.foldLeft((0.0, 0))( (accum, e) => (accum._1 + e._3, accum._2 + 1))
+        sum / q  // dividing by zero should never happen since there is at least one temperature measure for each station
+      }
+    }
   }
 
 }
