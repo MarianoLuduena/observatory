@@ -7,14 +7,24 @@ import org.apache.spark.storage.StorageLevel
 
 trait SparkSpecHelper {
 
+  @transient protected val sparkLogger: org.apache.log4j.Logger = {
+    val l = org.apache.log4j.Logger.getLogger("org.apache.spark")
+    l.setLevel(org.apache.log4j.Level.WARN)
+    l
+  }
+
   protected def sparkConf: SparkConf =
     new SparkConf()
       .setAppName("observatory")
       .setMaster("local[2]")
-      .set("spark.driver.memory", "1024m")
+      .set("spark.driver.maxResultSize", "768m")
+      .set("spark.driver.memory", "1g")
       .set("spark.executor.memory", "768m")
       .set("spark.logConf", "false")
-      .set("spark.sql.shuffle.partitions", "20")
+      .set("spark.sql.shuffle.partitions", "6")
+      .set("spark.default.parallelism", "5")
+      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+      .set("spark.kryoserializer.buffer.max", "128m")
 
   protected def sparkSessionBuilder: SparkSession.Builder =
     SparkSession
