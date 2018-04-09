@@ -9,8 +9,8 @@ trait ExtractionTest extends FunSuite {
   ignore("Extraction with 2015 Dataset") {
     val seq = Extraction.locateTemperatures(
       year = 2015,
-      stationsFile = "./src/main/resources/stations.csv",
-      temperaturesFile = "./src/main/resources/2015.csv"
+      stationsFile = "/stations.csv",  // file obtained as resource
+      temperaturesFile = "./src/main/resources/2015.csv"  // file as absolute/relative path
     )
     assertResult(4091191, "Sequence size does not match")(seq.size)
 
