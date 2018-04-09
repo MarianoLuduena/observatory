@@ -48,9 +48,8 @@ object Extraction extends SparkSpecHelper {
         .groupBy(_.stationUid)  // build pairRDD
 
     val joinedRDD = persist {
-      stationsRDD.leftOuterJoin(temperaturesRDD).flatMap {
-        case (_, (station, oTempSeq)) =>
-          oTempSeq.getOrElse(Iterable()).map(t => (t.date(year), station.location, t.tempC))
+      temperaturesRDD.join(stationsRDD).flatMap {
+        case (_, (tSeq, station)) => tSeq.map(t => (t.date(year), station.location, t.tempC))
       }
     }
 
