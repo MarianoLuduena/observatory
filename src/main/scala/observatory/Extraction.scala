@@ -33,7 +33,7 @@ object Extraction extends SparkSpecHelper {
     * @param temperaturesFile Path of the temperatures resource file to use (e.g. "/1975.csv")
     * @return An RDD containing triplets (date, location, temperature)
     */
-  private def locateTemperaturesRDD(year: Year, stationsFile: String, temperaturesFile: String):
+  def locateTemperaturesRDD(year: Year, stationsFile: String, temperaturesFile: String):
     RDD[(LocalDate, Location, Temperature)] = {
 
     val stationsRDD =
