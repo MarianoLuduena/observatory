@@ -33,7 +33,10 @@ trait SparkSpecHelper {
 
   protected def spark: SparkSession = sparkSessionBuilder.getOrCreate()
 
-  protected def read(file: String): RDD[String] = spark.read.textFile(file).rdd
+  protected def read(file: String): RDD[String] = {
+    val path = Option(getClass.getResource(file)).map(_.getFile).getOrElse(file)
+    spark.read.textFile(path).rdd
+  }
 
   protected def close(): Unit = spark.close()
 
