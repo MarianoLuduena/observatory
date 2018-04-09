@@ -31,7 +31,7 @@ object Temperature {
 
 case class Temperature(stn: String, wban: String, month: Int, day: Int, tempF: observatory.Temperature) {
 
-  val stationUid: String = stn + wban
+  val stationUid: String = stn + "|" + wban
 
   def date(year: Year): LocalDate = LocalDate.of(year, month, day)
 

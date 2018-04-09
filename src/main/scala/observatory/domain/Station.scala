@@ -25,7 +25,7 @@ object Station {
 
 case class Station(stn: String, wban: String, location: Location) {
 
-  val uid: String = stn + wban
+  val uid: String = stn + "|" + wban
 
   val toPair: (String, Station) = (uid, this)
 }
