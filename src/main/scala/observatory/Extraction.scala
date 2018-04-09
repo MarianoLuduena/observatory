@@ -71,12 +71,10 @@ object Extraction extends SparkSpecHelper {
     * @return An RDD containing, for each location, the average temperature over the year.
     */
   def locationYearlyAverageRecordsRDD(records: RDD[(LocalDate, Location, Temperature)]): RDD[(Location, Temperature)] = {
-    persist {
-      records.groupBy(_._2).mapValues { i =>
-        val (sum, q) = i.foldLeft((0.0, 0))( (accum, e) => (accum._1 + e._3, accum._2 + 1))
-        sum / q  // dividing by zero should never happen since there is at least one temperature measure for each station
-      }
-    }
+    records
+      .map(r => (r._2, (r._3, 1)))
+      .reduceByKey { (f, s) => (f._1 + s._1, f._2 + s._2) }
+      .map(r => (r._1, r._2._1 / r._2._2))  // dividing by zero should not happen; there should always be at least one element
   }
 
 }
