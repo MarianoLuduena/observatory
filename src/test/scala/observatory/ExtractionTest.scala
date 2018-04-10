@@ -17,4 +17,16 @@ trait ExtractionTest extends FunSuite {
     val avgTempByLocation = Extraction.locationYearlyAverageRecords(seq).take(100)
     avgTempByLocation.foreach(println)
   }
+
+  test("Data Extraction examples") {
+    val locatedTemps = Extraction.locateTemperatures(
+      year = 2015,
+      stationsFile = "/w1_stations.csv",
+      temperaturesFile = "/w1_temperatures.csv"
+    ).toArray
+    assertResult(3)(locatedTemps.length)
+
+    val avgTemps = Extraction.locationYearlyAverageRecords(locatedTemps).toArray
+    assertResult(2)(avgTemps.length)
+  }
 }
