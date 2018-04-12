@@ -100,8 +100,8 @@ trait InterpolationHelper {
     */
   protected def interpolateColor(lp: (Double, Color), up: (Double, Color), x: Double): Color =
     Color(
-      red = lerp(lp._1, lp._2.red, up._1, up._2.red, x).toInt,
-      green = lerp(lp._1, lp._2.green, up._1, up._2.green, x).toInt,
-      blue = lerp(lp._1, lp._2.blue, up._1, up._2.blue, x).toInt
+      red = lerp(lp._1, lp._2.red, up._1, up._2.red, x).round.toInt,
+      green = lerp(lp._1, lp._2.green, up._1, up._2.green, x).round.toInt,
+      blue = lerp(lp._1, lp._2.blue, up._1, up._2.blue, x).round.toInt
     )
 }
