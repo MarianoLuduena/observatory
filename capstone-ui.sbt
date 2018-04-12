@@ -2,7 +2,7 @@ val capstoneUI =
   project.in(file("capstone-ui"))
     .enablePlugins(ScalaJSPlugin)
     .settings(
-      scalaVersion := "2.11.8",
+      scalaVersion := "2.11.11",
       // Add the sources of the main project
       unmanagedSources in Compile ++= {
         val rootSourceDirectory = (scalaSource in (root, Compile)).value / "observatory"
