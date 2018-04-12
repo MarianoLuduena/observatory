@@ -19,6 +19,7 @@ trait SparkSpecHelper {
       .setMaster("local[2]")
       .set("spark.driver.maxResultSize", "768m")
       .set("spark.driver.memory", "1g")
+      .set("spark.driver.cores", "2")
       .set("spark.executor.memory", "768m")
       .set("spark.logConf", "false")
       .set("spark.sql.shuffle.partitions", "6")
@@ -31,7 +32,7 @@ trait SparkSpecHelper {
       .builder()
       .config(sparkConf)
 
-  protected def spark: SparkSession = sparkSessionBuilder.getOrCreate()
+  protected lazy val spark: SparkSession = sparkSessionBuilder.getOrCreate()
 
   protected def read(file: String): RDD[String] = {
     val path = Option(getClass.getResource(file)).map(_.getFile).getOrElse(file)
