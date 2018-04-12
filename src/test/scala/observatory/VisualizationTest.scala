@@ -27,6 +27,7 @@ trait VisualizationTest extends FunSuite with Checkers {
       Extraction.locationYearlyAverageRecords(seq)
     }
 
-    Visualization.visualize(avgTempByLocation, temperaturesColourScale).output("/tmp/test.png")
+    val path = Visualization.visualize(avgTempByLocation, temperaturesColourScale).output("/tmp/test.png")
+    assert(path != null)
   }
 }
