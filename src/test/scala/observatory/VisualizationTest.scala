@@ -30,4 +30,25 @@ trait VisualizationTest extends FunSuite with Checkers {
     val path = Visualization.visualize(avgTempByLocation, temperaturesColourScale).output("/tmp/test.png")
     assert(path != null)
   }
+
+  test("Predict temperature") {
+    val temperatures = Iterable[(Location, Temperature)](
+      (Location(-5.0, 0.0), 0.0),
+      (Location(-1.0, 2.0), 10.0),
+      (Location(0.0, 2.0), 10.0),
+      (Location(1.0, 3.0), 15.0),
+      (Location(5.0, -3.0), -5.0)
+    )
+    val t = Visualization.predictTemperature(temperatures, Location(0.0, 0.0))
+    assertResult(true)(t > 0)
+  }
+
+  test("Basic color interpolation") {
+    assertResult(Color(255, 255, 255))(Visualization.interpolateColor(temperaturesColourScale, 65.0))
+    assertResult(Color(255, 255, 255))(Visualization.interpolateColor(temperaturesColourScale, 60.0))
+    assertResult(Color(255, 0, 0))(Visualization.interpolateColor(temperaturesColourScale, 32.0))
+    assertResult(Color(17, 0, 54))(Visualization.interpolateColor(temperaturesColourScale, -55.0))
+    assertResult(Color(0, 0, 0))(Visualization.interpolateColor(temperaturesColourScale, -60.0))
+    assertResult(Color(0, 0, 0))(Visualization.interpolateColor(temperaturesColourScale, -65.0))
+  }
 }
