@@ -20,13 +20,13 @@ trait InteractionTest extends FunSuite with Checkers {
 
   ignore("One tile") {
     val img = {
-      val avgTemp = Extraction.locationYearlyAverageRecords(
-        Extraction.locateTemperatures(
+      val avgTemp = Extraction.locationYearlyAverageRecordsRDD(
+        Extraction.locateTemperaturesRDD(
           year = 1975,
           stationsFile = "/stations.csv",
           temperaturesFile = "/1975.csv"
         )
-      )
+      ).collect()
       Interaction.tile(avgTemp, temperaturesColourScale, Tile(0, 0, 0))
     }
 

@@ -19,12 +19,12 @@ trait VisualizationTest extends FunSuite with Checkers {
 
   ignore("2015 temperatures image to disk") {
     val avgTempByLocation = {
-      val seq = Extraction.locateTemperatures(
+      val seq = Extraction.locateTemperaturesRDD(
         year = 2015,
         stationsFile = "/stations.csv",
         temperaturesFile = "/2015.csv"
       )
-      Extraction.locationYearlyAverageRecords(seq)
+      Extraction.locationYearlyAverageRecordsRDD(seq).collect()
     }
 
     val path = Visualization.visualize(avgTempByLocation, temperaturesColourScale).output("/tmp/test.png")
