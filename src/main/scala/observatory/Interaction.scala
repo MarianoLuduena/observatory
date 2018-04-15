@@ -20,7 +20,20 @@ object Interaction {
     * @return A 256×256 image showing the contents of the given tile
     */
   def tile(temperatures: Iterable[(Location, Temperature)], colors: Iterable[(Temperature, Color)], tile: Tile): Image = {
-    ???
+
+    val width = 256
+    val height = 256
+    val alpha = 127
+    val newZoom = tile.zoom + 8
+    val n = width  // 2^8 = 256
+
+    def posToLocation(width: Int, height: Int, pos: Int): Location = {
+      val newX = n * tile.x + pos % width
+      val newY = n * tile.y + pos / width
+      tileLocation(Tile(newX, newY, newZoom))
+    }
+
+    Visualization.visualize(temperatures, colors, width, height, alpha, posToLocation)
   }
 
   /**
