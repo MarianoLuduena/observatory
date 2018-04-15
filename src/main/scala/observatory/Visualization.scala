@@ -43,7 +43,13 @@ object Visualization extends InterpolationHelper {
     val width: Int = 360
     val height: Int = 180
 
-    visualize(temperatures, colors, width, height, 255)
+    def posToLocation(width: Int, height: Int, pos: Int): Location = {
+      val latitude = 90 - 180.0 / height * (pos / width)
+      val longitude = -180 + 360.0 / width * (pos % width)
+      Location(lat = latitude, lon = longitude)
+    }
+
+    visualize(temperatures, colors, width, height, 255, posToLocation)
   }
 
   /**
@@ -61,14 +67,9 @@ object Visualization extends InterpolationHelper {
                  colors: Iterable[(Temperature, Color)],
                  width: Int,
                  height: Int,
-                 alpha: Int
+                 alpha: Int,
+                 posToLocation: (Int, Int, Int) => Location
                ): Image = {
-
-    def posToLocation(width: Int, height: Int, pos: Int): Location = {
-      val latitude = 90 - 180.0 / height * (pos / width)
-      val longitude = -180 + 360.0 / width * (pos % width)
-      Location(lat = latitude, lon = longitude)
-    }
 
     val pixels = (0 until (width * height)).toParArray.map { x =>
       val predictedTemperature = predictTemperature(temperatures, posToLocation(width, height, x))
