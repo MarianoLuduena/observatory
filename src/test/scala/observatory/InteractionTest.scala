@@ -33,4 +33,28 @@ trait InteractionTest extends FunSuite with Checkers {
     val path = img.output("/tmp/test.png")
     println(path)
   }
+
+  ignore("Generate tiles for 1975") {
+    def generateImage(year: Year, tile: Tile, data: Iterable[(Location, Temperature)]): Unit = {
+      val img = Interaction.tile(data, temperaturesColourScale, tile)
+      val path = img.output(s"target/temperatures/$year/${tile.zoom}/${tile.x}-${tile.y}.png")
+      println(path)
+    }
+
+    val start = System.currentTimeMillis()
+
+    val year = 1975
+    val data = Extraction.locationYearlyAverageRecordsRDD(
+      Extraction.locateTemperaturesRDD(
+        year = year,
+        stationsFile = "/stations.csv",
+        temperaturesFile = s"/$year.csv"
+      )
+    ).collect()
+
+    Interaction.generateTiles[Iterable[(Location, Temperature)]](Iterable((year, data)), generateImage)
+
+    val finish = System.currentTimeMillis()
+    println(s"\nTotal processing time: ${(finish - start) / 60000.0} minutes")
+  }
 }
