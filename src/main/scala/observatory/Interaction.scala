@@ -1,11 +1,14 @@
 package observatory
 
 import com.sksamuel.scrimage.{Image, Pixel}
+import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor, Future}
 
 /**
   * 3rd milestone: interactive visualization
   */
 object Interaction {
+
+  private val logger = org.apache.log4j.Logger.getLogger(getClass.getSimpleName)
 
   /**
     * @param tile Tile coordinates
@@ -47,7 +50,23 @@ object Interaction {
     yearlyData: Iterable[(Year, Data)],
     generateImage: (Year, Tile, Data) => Unit
   ): Unit = {
-    ???
+
+    implicit val ec: ExecutionContextExecutor = ExecutionContext.Implicits.global
+
+    val futures =
+      for {
+        (year, data) <- yearlyData
+        zoom <- 0 to 3
+        qTiles = scala.math.pow(4, zoom).toInt
+        tileNumber <- 0 until qTiles
+        sideLength = scala.math.pow(2, zoom).toInt
+        (x, y) = (tileNumber % sideLength, tileNumber / sideLength)
+      } yield Future { generateImage(year, Tile(x, y, zoom), data) }(ec)
+
+    val qProcessedTiles = scala.concurrent.Future.sequence(futures).map(_.size)
+    val result = Await.result(qProcessedTiles, scala.concurrent.duration.Duration.fromNanos(7200000L))  // 2 hours
+
+    logger.info(s"Number of processed tiles: $result")
   }
 
 }
