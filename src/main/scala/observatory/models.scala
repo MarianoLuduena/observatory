@@ -1,6 +1,7 @@
 package observatory
 
 import com.sksamuel.scrimage.Pixel
+import scala.math.{Pi, atan, pow, sinh}
 
 /**
   * Introduced in Week 1. Represents a location on the globe.
@@ -17,7 +18,16 @@ case class Location(lat: Double, lon: Double)
   * @param y Y coordinate of the tile
   * @param zoom Zoom level, 0 ≤ zoom ≤ 19
   */
-case class Tile(x: Int, y: Int, zoom: Int)
+case class Tile(x: Int, y: Int, zoom: Int) {
+
+  def toLocation: Location = {
+    val n = pow(2, zoom)
+    val longitude = x.toDouble / n * 360 - 180
+    val latitude = atan(sinh(Pi - y.toDouble / n * 2 * Pi)) * 180 / Pi
+
+    Location(lat = latitude, lon = longitude)
+  }
+}
 
 /**
   * Introduced in Week 4. Represents a point on a grid composed of

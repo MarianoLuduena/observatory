@@ -11,9 +11,7 @@ object Interaction {
     * @param tile Tile coordinates
     * @return The latitude and longitude of the top-left corner of the tile, as per http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
     */
-  def tileLocation(tile: Tile): Location = {
-    ???
-  }
+  def tileLocation(tile: Tile): Location = tile.toLocation
 
   /**
     * @param temperatures Known temperatures
