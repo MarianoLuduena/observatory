@@ -1,7 +1,7 @@
 package observatory
 
-import com.sksamuel.scrimage.{Image, Pixel}
-import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor, Future}
+import com.sksamuel.scrimage.Image
+import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor, Future, duration}
 
 /**
   * 3rd milestone: interactive visualization
@@ -64,7 +64,7 @@ object Interaction {
       } yield Future { generateImage(year, Tile(x, y, zoom), data) }(ec)
 
     val qProcessedTiles = scala.concurrent.Future.sequence(futures).map(_.size)
-    val result = Await.result(qProcessedTiles, scala.concurrent.duration.Duration.fromNanos(7200000L))  // 2 hours
+    val result = Await.result(qProcessedTiles, duration.Duration(2, duration.HOURS))
 
     logger.info(s"Number of processed tiles: $result")
   }
