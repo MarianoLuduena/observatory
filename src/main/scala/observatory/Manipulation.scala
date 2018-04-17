@@ -1,9 +1,12 @@
 package observatory
 
+import observatory.helpers.SparkSpecHelper
+import org.apache.spark.rdd.RDD
+
 /**
   * 4th milestone: value-added information
   */
-object Manipulation {
+object Manipulation extends SparkSpecHelper {
 
   /**
     * @param temperatures Known temperatures
@@ -11,7 +14,7 @@ object Manipulation {
     *         returns the predicted temperature at this location
     */
   def makeGrid(temperatures: Iterable[(Location, Temperature)]): GridLocation => Temperature = {
-    ???
+    Grid(temperatures).getTemperature
   }
 
   /**
@@ -20,7 +23,23 @@ object Manipulation {
     * @return A function that, given a latitude and a longitude, returns the average temperature at this location
     */
   def average(temperaturess: Iterable[Iterable[(Location, Temperature)]]): GridLocation => Temperature = {
-    ???
+    averageRDD(temperaturess.map(iter => spark.sparkContext.parallelize(iter.toSeq)))
+  }
+
+  /**
+    * @param temperatures A sequence of known temperatures over the years
+    * @return An RDD of the average temperature for each location
+    */
+  def averageRDD(temperatures: Iterable[RDD[(Location, Temperature)]]): GridLocation => Temperature = {
+    makeGrid(
+      collect(
+        temperatures.tail
+          .foldLeft(temperatures.head) { (unioned, rdd) => unioned.union(rdd) }
+          .mapValues(t => (t, 1))
+          .reduceByKey((a, b) => (a._1 + b._1, a._2 + b._2))
+          .mapValues(x => x._1 / x._2)
+      )
+    )
   }
 
   /**
@@ -29,7 +48,8 @@ object Manipulation {
     * @return A grid containing the deviations compared to the normal temperatures
     */
   def deviation(temperatures: Iterable[(Location, Temperature)], normals: GridLocation => Temperature): GridLocation => Temperature = {
-    ???
+    val grid = makeGrid(temperatures)
+    gl => grid(gl) - normals(gl)
   }
 
 
