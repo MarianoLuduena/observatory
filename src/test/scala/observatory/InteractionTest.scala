@@ -3,8 +3,6 @@ package observatory
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 
-import scala.collection.concurrent.TrieMap
-
 trait InteractionTest extends FunSuite with Checkers {
 
   private val temperaturesColourScale = Iterable[(observatory.Temperature, Color)](
@@ -37,7 +35,10 @@ trait InteractionTest extends FunSuite with Checkers {
   ignore("Generate tiles for 1975") {
     def generateImage(year: Year, tile: Tile, data: Iterable[(Location, Temperature)]): Unit = {
       val img = Interaction.tile(data, temperaturesColourScale, tile)
-      val path = img.output(s"target/temperatures/$year/${tile.zoom}/${tile.x}-${tile.y}.png")
+      val dirPath = s"./target/temperatures/$year/${tile.zoom}"
+      val directory = new java.io.File(dirPath)
+      if (!directory.exists()) directory.mkdirs()
+      val path = img.output(dirPath + s"/${tile.x}-${tile.y}.png")
       println(path)
     }
 
