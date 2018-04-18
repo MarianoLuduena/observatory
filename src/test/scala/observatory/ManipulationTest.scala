@@ -5,20 +5,16 @@ import org.scalatest.prop.Checkers
 
 trait ManipulationTest extends FunSuite with Checkers {
 
-  ignore("Average with RDDs") {
-    val tempsByYear = (1975 to 1980).map { year =>
-      val temperaturesRDD = Extraction.locateTemperaturesRDD(
-        year,
-        stationsFile = "/stations.csv",
-        temperaturesFile = s"/$year.csv"
+  test("Deviation") {
+    val normals = Manipulation.average(
+      Iterable(
+        Iterable((Location(0, 0), 1.0), (Location(-1, 0), 1.0), (Location(0, 1), 1.0), (Location(1, 1), 1.0))
       )
-      val avgTemperaturesRDD = Extraction.locationYearlyAverageRecordsRDD(temperaturesRDD)
-      temperaturesRDD.unpersist(blocking = false)
-      avgTemperaturesRDD
-    }
+    )
 
-    val fn = Manipulation.averageRDD(tempsByYear)
-    println(s"(0, 0) = ${fn(GridLocation(0, 0))}")
+    val ts = Iterable((Location(0, 0), 2.0), (Location(-1, 0), 0.0), (Location(0, 1), 1.0), (Location(1, 1), -1.0))
+    val dv = Manipulation.deviation(ts, normals)
+    println(dv(GridLocation(0, 0)))
   }
 
 }

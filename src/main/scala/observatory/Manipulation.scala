@@ -1,7 +1,6 @@
 package observatory
 
 import observatory.helpers.SparkSpecHelper
-import org.apache.spark.rdd.RDD
 
 /**
   * 4th milestone: value-added information
@@ -23,23 +22,11 @@ object Manipulation extends SparkSpecHelper {
     * @return A function that, given a latitude and a longitude, returns the average temperature at this location
     */
   def average(temperaturess: Iterable[Iterable[(Location, Temperature)]]): GridLocation => Temperature = {
-    averageRDD(temperaturess.map(iter => spark.sparkContext.parallelize(iter.toSeq)))
-  }
-
-  /**
-    * @param temperatures A sequence of known temperatures over the years
-    * @return An RDD of the average temperature for each location
-    */
-  def averageRDD(temperatures: Iterable[RDD[(Location, Temperature)]]): GridLocation => Temperature = {
-    makeGrid(
-      collect(
-        temperatures.tail
-          .foldLeft(temperatures.head) { (unioned, rdd) => unioned.union(rdd) }
-          .mapValues(t => (t, 1))
-          .reduceByKey((a, b) => (a._1 + b._1, a._2 + b._2))
-          .mapValues(x => x._1 / x._2)
-      )
-    )
+    val grid =
+      temperaturess.map(t => (Grid.apply(t), 1)).reduce((t1, t2) => (t1._1 += t2._1, t1._2 + t2._2)) match {
+        case (g, count) => g.scaleTo(1.0 / count); g
+      }
+    grid.getTemperature
   }
 
   /**

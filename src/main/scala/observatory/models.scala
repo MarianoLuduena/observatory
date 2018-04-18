@@ -76,8 +76,9 @@ sealed class Grid {
 
   val width: Int = 360
   val height: Int = 180
+  val size: Int = width * height
 
-  private val data: ParArray[Temperature] = new ParArray[Temperature](width * height)
+  private val data: ParArray[Temperature] = new ParArray[Temperature](size)
 
   def setValueAt(x: Int, y: Int, value: Temperature): Unit = data(x + y * width) = value
 
@@ -94,4 +95,11 @@ sealed class Grid {
 
     data(x + y * width)
   }
+
+  def +=(that: Grid): Grid = {
+    (0 until size).par.foreach(i => data(i) += that.data(i))
+    this
+  }
+
+  def scaleTo(factor: Double): Unit = (0 until size).par.foreach(i => data(i) *= factor)
 }
