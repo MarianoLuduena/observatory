@@ -17,4 +17,33 @@ trait ManipulationTest extends FunSuite with Checkers {
     println(dv(GridLocation(0, 0)))
   }
 
+  ignore("Five year average") {
+    val averagesByYear = (1975 until 1980).map { year =>
+      Extraction.locationYearlyAverageRecordsRDD(
+        Extraction.locateTemperaturesRDD(
+          year = year,
+          stationsFile = "/stations.csv",  // FIXME: This must be done more efficiently
+          temperaturesFile = s"/$year.csv"
+        )
+      ).collect.toIterable
+    }
+
+    val f = Manipulation.average(averagesByYear)
+    println(f(GridLocation(0, 0)))
+  }
+
+  ignore("Temperature prediction - Location vs. GridLocation") {
+    val avgTemp = Extraction.locationYearlyAverageRecordsRDD(
+      Extraction.locateTemperaturesRDD(
+        year = 1975,
+        stationsFile = "/stations.csv",
+        temperaturesFile = "/1975.csv"
+      )
+    ).collect
+
+    val t1 = Visualization.predictTemperature(avgTemp, Location(90, -180))  // top-left corner
+    val f = Manipulation.makeGrid(avgTemp)
+    val t2 = f(GridLocation(90, -180))
+    assertResult(true)(scala.math.abs(t2 - t1) < 0.001)
+  }
 }
