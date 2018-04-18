@@ -62,7 +62,7 @@ object Grid {
 
     (0 until grid.width).par.foreach { x =>
       (0 until grid.height).par.foreach { y =>
-        val location: Location = Location(lat = y - grid.height / 2, lon = x - grid.width / 2)
+        val location: Location = Location(lat = grid.height / 2 - y, lon = x - grid.width / 2)
         grid.setValueAt(x, y, Visualization.predictTemperature(temperatures, location))
       }
     }
