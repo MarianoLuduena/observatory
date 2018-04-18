@@ -61,12 +61,11 @@ object Grid {
   def apply(temperatures: Iterable[(Location, Temperature)]): Grid = {
     val grid: Grid = new Grid
 
-    for {
-      x <- 0 until grid.width
-      y <- 0 until grid.height
-    } yield {
-      val location: Location = Location(lat = y - grid.height / 2, lon = x - grid.width / 2)
-      grid.setValueAt(x, y, Visualization.predictTemperature(temperatures, location))
+    (0 until grid.width).par.foreach { x =>
+      (0 until grid.height).par.foreach { y =>
+        val location: Location = Location(lat = y - grid.height / 2, lon = x - grid.width / 2)
+        grid.setValueAt(x, y, Visualization.predictTemperature(temperatures, location))
+      }
     }
 
     grid
