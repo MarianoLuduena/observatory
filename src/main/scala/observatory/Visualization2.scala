@@ -1,11 +1,12 @@
 package observatory
 
 import com.sksamuel.scrimage.{Image, Pixel}
+import observatory.helpers.InterpolationHelper
 
 /**
   * 5th milestone: value-added information visualization
   */
-object Visualization2 {
+object Visualization2 extends InterpolationHelper {
 
   /**
     * @param point (x, y) coordinates of a point in the grid cell
@@ -23,7 +24,8 @@ object Visualization2 {
     d10: Temperature,
     d11: Temperature
   ): Temperature = {
-    ???
+    val (x, y) = (point.x, point.y)
+    unitSquareInterpolation(x, y, d00, d01, d10, d11)
   }
 
   /**
@@ -37,7 +39,33 @@ object Visualization2 {
     colors: Iterable[(Temperature, Color)],
     tile: Tile
   ): Image = {
-    ???
+
+    val width = 256
+    val height = 256
+    val alpha = 127
+    val newZoom = tile.zoom + 8
+    val n = width  // 2^8 = 256
+
+    val pixels = (0 until width * height).par.map { pos =>
+      val (x, y, d00, d01, d10, d11) = {
+        val newX = n * tile.x + pos % width
+        val newY = n * tile.y + pos / width
+        val location = Tile(newX, newY, newZoom).toLocation
+        (
+          location.lon - location.lon.floor,
+          location.lat - location.lat.floor,
+          grid(GridLocation(location.lat.floor.toInt, location.lon.floor.toInt)),
+          grid(GridLocation(location.lat.ceil.toInt, location.lon.floor.toInt)),
+          grid(GridLocation(location.lat.floor.toInt, location.lon.ceil.toInt)),
+          grid(GridLocation(location.lat.ceil.toInt, location.lon.ceil.toInt))
+        )
+      }
+
+      val interpolatedTemperature = bilinearInterpolation(CellPoint(x, y), d00, d01, d10, d11)
+      Visualization.interpolateColor(colors, interpolatedTemperature).toPixel(alpha)
+    }
+
+    Image(width, height, pixels.toArray)
   }
 
 }

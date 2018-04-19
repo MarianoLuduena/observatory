@@ -104,4 +104,25 @@ trait InterpolationHelper {
       green = lerp(lp._1, lp._2.green, up._1, up._2.green, x).round.toInt,
       blue = lerp(lp._1, lp._2.blue, up._1, up._2.blue, x).round.toInt
     )
+
+  /**
+    * Special case of bilinear interpolation
+    *
+    * @param x Position on the X axis
+    * @param y Position on the Y axis
+    * @param d00 Known value at (0, 0)
+    * @param d01 Known value at (0, 1)
+    * @param d10 Known value at (1, 0)
+    * @param d11 Known value at (1, 1)
+    * @return
+    */
+  protected def unitSquareInterpolation(
+                               x: Double,
+                               y: Double,
+                               d00: Double,
+                               d01: Double,
+                               d10: Double,
+                               d11: Double
+                             ): Double =
+    d00 * (1 - x) * (1 - y) + d10 * x * (1 - y) + d01 * (1 - x) * y + d11 * x * y
 }
