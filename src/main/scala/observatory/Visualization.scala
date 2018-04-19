@@ -71,7 +71,7 @@ object Visualization extends InterpolationHelper {
                  posToLocation: (Int, Int, Int) => Location
                ): Image = {
 
-    val pixels = (0 until (width * height)).toParArray.map { x =>
+    val pixels = (0 until (width * height)).par.map { x =>
       val predictedTemperature = predictTemperature(temperatures, posToLocation(width, height, x))
       val interpolatedColour = interpolateColor(colors, predictedTemperature)
       interpolatedColour.toPixel(alpha)
