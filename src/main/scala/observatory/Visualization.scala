@@ -24,7 +24,7 @@ object Visualization extends InterpolationHelper {
     * @return The color that corresponds to `value`, according to the color scale defined by `points`
     */
   def interpolateColor(points: Iterable[(Temperature, Color)], value: Temperature): Color = {
-    val (lowerPoints, upperPoints) = points.toArray.sortBy(_._1).partition(_._1 < value)
+    val (lowerPoints, upperPoints) = points.partition(_._1 < value)
     (lowerPoints.lastOption, upperPoints.headOption) match {
       case (_, Some(up)) if up._1 == value => up._2
       case (Some(lp), Some(up)) => interpolateColor(lp, up, value)
@@ -71,9 +71,11 @@ object Visualization extends InterpolationHelper {
                  posToLocation: (Int, Int, Int) => Location
                ): Image = {
 
+    val orderedColours = colors.toArray.sortBy(_._1)
+
     val pixels = (0 until (width * height)).par.map { x =>
       val predictedTemperature = predictTemperature(temperatures, posToLocation(width, height, x))
-      val interpolatedColour = interpolateColor(colors, predictedTemperature)
+      val interpolatedColour = interpolateColor(orderedColours, predictedTemperature)
       interpolatedColour.toPixel(alpha)
     }
 

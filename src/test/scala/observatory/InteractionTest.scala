@@ -14,7 +14,7 @@ trait InteractionTest extends FunSuite with Checkers {
     (-27.0, Color(255, 0, 255)),
     (-50.0, Color(33, 0, 107)),
     (-60.0, Color(0, 0, 0))
-  )
+  ).toArray.sortBy(_._1)
 
   ignore("One tile") {
     val img = {

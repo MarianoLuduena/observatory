@@ -45,6 +45,7 @@ object Visualization2 extends InterpolationHelper {
     val alpha = 127
     val newZoom = tile.zoom + 8
     val n = width  // 2^8 = 256
+    val orderedColours = colors.toArray.sortBy(_._1)
 
     val pixels = (0 until width * height).par.map { pos =>
       val (x, y, d00, d01, d10, d11) = {
@@ -62,7 +63,7 @@ object Visualization2 extends InterpolationHelper {
       }
 
       val interpolatedTemperature = bilinearInterpolation(CellPoint(x, y), d00, d01, d10, d11)
-      Visualization.interpolateColor(colors, interpolatedTemperature).toPixel(alpha)
+      Visualization.interpolateColor(orderedColours, interpolatedTemperature).toPixel(alpha)
     }
 
     Image(width, height, pixels.toArray)

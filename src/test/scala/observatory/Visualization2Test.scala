@@ -5,14 +5,14 @@ import org.scalatest.prop.Checkers
 
 trait Visualization2Test extends FunSuite with Checkers {
 
-  private val colourScale = Iterable(
+  private val colourScale: Iterable[(Temperature, Color)] = Iterable(
     (7.0, Color(0, 0, 0)),
     (4.0, Color(255, 0, 0)),
     (2.0, Color(255, 255, 0)),
     (0.0, Color(255, 255, 255)),
     (-2.0, Color(0, 255, 255)),
     (-7.0, Color(0, 0, 255))
-  )
+  ).toArray.sortBy(_._1)
 
   private def averageTemperatures(year: Year): Iterable[(Location, Temperature)] =
     Extraction.locationYearlyAverageRecordsRDD(
