@@ -53,11 +53,11 @@ object Visualization2 extends InterpolationHelper {
         val newY = n * tile.y + pos / width
         val location = Tile(newX, newY, newZoom).toLocation
         (
-          location.lon - location.lon.toInt,
-          location.lat - location.lat.toInt,
-          grid(GridLocation(location.lat.toInt, location.lon.toInt)),
-          grid(GridLocation(location.lat.ceil.toInt, location.lon.toInt)),
-          grid(GridLocation(location.lat.toInt, location.lon.ceil.toInt)),
+          location.lon - location.lon.floor,
+          location.lat - location.lat.floor,
+          grid(GridLocation(location.lat.floor.toInt, location.lon.floor.toInt)),
+          grid(GridLocation(location.lat.ceil.toInt, location.lon.floor.toInt)),
+          grid(GridLocation(location.lat.floor.toInt, location.lon.ceil.toInt)),
           grid(GridLocation(location.lat.ceil.toInt, location.lon.ceil.toInt))
         )
       }
