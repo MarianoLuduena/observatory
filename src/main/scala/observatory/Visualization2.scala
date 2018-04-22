@@ -63,7 +63,7 @@ object Visualization2 extends InterpolationHelper {
       }
 
       val interpolatedTemperature = bilinearInterpolation(CellPoint(x, y), d00, d01, d10, d11)
-      Visualization.interpolateColor(orderedColours, interpolatedTemperature).toPixel(alpha)
+      Visualization.colorToPixel(Visualization.interpolateColor(orderedColours, interpolatedTemperature), alpha)
     }
 
     Image(width, height, pixels.toArray)

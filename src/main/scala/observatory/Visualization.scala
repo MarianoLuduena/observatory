@@ -1,6 +1,6 @@
 package observatory
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.{Image, Pixel}
 import observatory.helpers.InterpolationHelper
 
 /**
@@ -76,11 +76,13 @@ object Visualization extends InterpolationHelper {
     val pixels = (0 until (width * height)).par.map { x =>
       val predictedTemperature = predictTemperature(temperatures, posToLocation(width, height, x))
       val interpolatedColour = interpolateColor(orderedColours, predictedTemperature)
-      interpolatedColour.toPixel(alpha)
+      colorToPixel(interpolatedColour, alpha)
     }
 
     Image(width, height, pixels.toArray)
   }
+
+  def colorToPixel(colour: Color, alpha: Int = 255): Pixel = Pixel(colour.red, colour.green, colour.blue, alpha)
 
 }
 
