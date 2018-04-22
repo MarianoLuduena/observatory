@@ -11,5 +11,5 @@ Instructions for each milestone can be found inside the `milestones` directory. 
 related to weather stations and temperature metrics is not included due to their big size.
 
 #### Useful Links
-- [Assignment](http://alaska.epfl.ch/~dockermoocs/capstone/observatory-v2.zip)(observatory-v2.zip)
-- [Dataset](http://alaska.epfl.ch/files/scala-capstone-data.zip)(scala-capstone-data.zip)
+- [Assignment](http://alaska.epfl.ch/~dockermoocs/capstone/observatory-v2.zip) (observatory-v2.zip)
+- [Dataset](http://alaska.epfl.ch/files/scala-capstone-data.zip) (scala-capstone-data.zip)
