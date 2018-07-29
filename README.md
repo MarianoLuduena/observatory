@@ -8,7 +8,7 @@ implementation, the stations file is processed multiple times -once per year-, w
 is good enough to pass the grader's tests (10/10).
 
 Instructions for each milestone can be found inside the `milestones` directory. The CSV files that contain the data
-related to weather stations and temperature metrics is not included due to their big size.
+related to weather stations and temperature metrics are not included due to their big size.
 
 #### Useful Links
 - [Assignment](http://alaska.epfl.ch/~dockermoocs/capstone/observatory-v2.zip) (observatory-v2.zip)
